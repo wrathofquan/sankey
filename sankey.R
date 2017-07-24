@@ -1,0 +1,68 @@
+library(networkD3)
+library(dplyr)
+library(readxl)
+
+#adapted from https://walkerke.github.io/2016/06/interactive-flow-visualization-in-r/
+
+faculty_sankey <- read_excel("faculty.xlsx") %>% 
+  rename(Country = `Country (1)`,
+         Department = `Department 1`) %>%
+  group_by(Country, Department) %>%
+  summarize(count = n()) %>%
+  mutate(merge_country = Country) %>%
+  select(Department, Country, merge_country, count)
+
+
+
+name_vec <- c(unique(faculty_sankey$Department), unique(faculty_sankey$Country))
+
+nodes <- data.frame(name = name_vec, id = 0:74)
+
+links <- faculty_sankey %>%
+  left_join(nodes, by = c('Department' = 'name')) %>%
+  rename(origin_id = id) %>%
+  left_join(nodes, by = c('Country' = 'name')) %>%
+  rename(dest_id = id)
+
+#sankey chart
+sankeyNetwork(Links = links, Nodes = nodes, Source = 'origin_id', Target = 'dest_id', 
+              Value = 'count', NodeID = 'name', fontSize = 16)
+
+##bar charts
+library(ggplot2)
+library(ggthemes)
+
+faculty <- faculty_sankey %>%
+  mutate(country_merge = Country)
+
+#read in region is 3166
+region <- read.csv(url("https://raw.githubusercontent.com/lukes/ISO-3166-Countries-with-Regional-Codes/master/all/all.csv"))%>%
+  mutate(country_merge = name)
+  
+
+faculty1 <- inner_join(faculty, region, by = "country_merge")
+
+
+glimpse(region)
+
+
+#bar chart for asia
+faculty1 %>% filter(region == "Asia") %>% ggplot(aes(Department)) + geom_bar(aes(fill=Country)) + theme_tufte() + 
+  facet_grid(.~region) + theme(axis.text.x  = element_text(angle=45, vjust= 0.5))
+
+
+#bar chart for africa
+faculty1 %>% filter(region == "Africa") %>% ggplot(aes(Department)) + geom_bar(aes(fill=Country)) + theme_tufte() + 
+  facet_grid(.~region) + theme(axis.text.x  = element_text(angle=45, vjust= 0.5))
+
+
+#bar chart for Americas
+faculty1 %>% filter(region == "Americas") %>% ggplot(aes(Department)) + geom_bar(aes(fill=Country)) + theme_tufte() + 
+  facet_grid(.~region) + theme(axis.text.x  = element_text(angle=45, vjust= 0.5))
+
+
+#bar chart for Europe
+faculty1 %>% filter(region == "Europe") %>% ggplot(aes(Department)) + geom_bar(aes(fill=Country)) + theme_tufte() + 
+  facet_grid(.~region) + theme(axis.text.x  = element_text(angle=45, vjust= 0.5))
+
+
