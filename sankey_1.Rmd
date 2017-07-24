@@ -1,10 +1,7 @@
 ---
-title: "Social Sciences Faculty Research Geographies"
-output:
-  html_notebook: default
-  html_document: default
+title: "Sankey Chart for Social Sciences Faculty Data"
+output: github_document
 ---
-
 
 ```{r}
 library(networkD3)
@@ -34,5 +31,5 @@ links <- faculty_sankey %>%
 #sankey chart
 sankeyNetwork(Links = links, Nodes = nodes, Source = 'origin_id', Target = 'dest_id', 
               Value = 'count', NodeID = 'name', fontSize = 14, nodeWidth = 20, height = 1000, width = 800)
-
 ```
+
