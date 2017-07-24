@@ -1,6 +1,8 @@
 ---
 title: "Social Sciences Faculty Research Geographies"
-output: html_notebook
+output:
+  html_document: default
+  html_notebook: default
 ---
 
 
@@ -31,6 +33,6 @@ links <- faculty_sankey %>%
 
 #sankey chart
 sankeyNetwork(Links = links, Nodes = nodes, Source = 'origin_id', Target = 'dest_id', 
-              Value = 'count', NodeID = 'name', fontSize = 14, nodeWidth = 20, height = 1000, width = 600)
+              Value = 'count', NodeID = 'name', fontSize = 14, nodeWidth = 20, height = 1000, width = 800)
 
 ```
